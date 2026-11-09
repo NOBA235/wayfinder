@@ -129,7 +129,7 @@
         "stepId": "gap-instructor-evaluates-and-corrects-unhandled",
         "title": "Policy Gap: Unhandled Branch",
         "description": "This policy does not specify what happens if not If resolution not reached.",
-        "callScript": "Hello, my name is [Your Name]. I am following the university's University of Rochester Academic Grade Appeal Procedure. At step \"Instructor Determination\", the published policy does not clarify: \"This policy does not specify what happens if not If resolution not reached.\". Could I please speak with Dean of the College to verify how I should proceed?",
+        "callScript": "Hello, my name is [Your Name], student ID [My ID]. I am following the university's University of Rochester Academic Grade Appeal Procedure for \"Instructor Determination\". The official policy does not specify what to do if not If resolution not reached.. Could you connect me with Dean of the College to confirm how I should proceed?",
         "fallback_contact": {
           "name": "Dean of the College",
           "email": null,
@@ -150,7 +150,7 @@
         "stepId": "gap-approach-faculty-member-0",
         "title": "Policy Gap: Uncovered Procedure",
         "description": "Procedure if instructor is on leave, retired, or unresponsive to email",
-        "callScript": "Hello, my name is [Your Name]. I am following the university's University of Rochester Academic Grade Appeal Procedure. At step \"Discuss with Instructor\", the published policy does not clarify: \"Procedure if instructor is on leave, retired, or unresponsive to email\". Could I please speak with Dean of the College to verify how I should proceed?",
+        "callScript": "Hello, my name is [Your Name], student ID [My ID]. I am following the university's University of Rochester Academic Grade Appeal Procedure for \"Discuss with Instructor\". The official policy does not specify what to do if Procedure if instructor is on leave, retired, or unresponsive to email. Could you connect me with Dean of the College to confirm how I should proceed?",
         "fallback_contact": {
           "name": "Dean of the College",
           "email": null,

@@ -12,3 +12,38 @@ html, body, #root {
   background-color: #020617;
   color: #f8fafc;
 }
+
+@media print {
+  body, html, #root {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  header,
+  nav,
+  .react-flow,
+  .react-flow__controls,
+  .react-flow__minimap,
+  .react-flow__background,
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  #printable-checklist {
+    position: static !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  @page {
+    margin: 1.2cm;
+    size: letter portrait;
+  }
+}

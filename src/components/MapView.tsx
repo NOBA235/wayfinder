@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import {
   ReactFlow,
   Background,
@@ -14,9 +14,16 @@ import {
   AlertTriangle,
   RotateCcw,
   Sparkles,
+  Printer,
+  CalendarPlus,
+  Share2,
+  Check,
+  Calendar,
 } from 'lucide-react';
 import { ProcedureNode, type CustomNodeData } from './ProcedureNode';
 import { CitationSidePanel } from './CitationSidePanel';
+import { ChecklistView } from './ChecklistView';
+import { generateIcsCalendar, downloadFile } from '../lib/exportUtils';
 import type { GraphNodeData } from '../lib/graphBuilder';
 
 interface StaticProcedureGraph {
@@ -32,6 +39,7 @@ interface StaticProcedureGraph {
 
 export default function MapView() {
   const { procedureId } = useParams<{ procedureId: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const activeId = procedureId || 'rochester-grade-appeal';
 
   const [rawGraph, setRawGraph] = useState<StaticProcedureGraph | null>(null);
@@ -39,7 +47,12 @@ export default function MapView() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Active branch path filtering: set of highlighted node IDs
+  // Selected Path state: ordered array of step IDs
+  const [selectedPathIds, setSelectedPathIds] = useState<string[]>([]);
+  const [checklistOpen, setChecklistOpen] = useState<boolean>(false);
+  const [shareCopied, setShareCopied] = useState<boolean>(false);
+
+  // Active branch choice state
   const [activeBranchChoice, setActiveBranchChoice] = useState<{
     decisionId: string;
     targetId: string;
@@ -63,79 +76,117 @@ export default function MapView() {
       .then((data) => {
         setRawGraph(data);
         setLoading(false);
+
+        // Check if shared path is encoded in URL
+        const pathParam = searchParams.get('path');
+        if (pathParam) {
+          const ids = pathParam.split(',').filter(Boolean);
+          setSelectedPathIds(ids);
+          // Auto-select the last node in the shared path for inspection
+          const lastNode = data.nodes.find((n) => n.id === ids[ids.length - 1]);
+          if (lastNode) {
+            setSelectedNode(lastNode);
+          }
+        } else {
+          // Initialize selectedPath with the natural initial root path
+          const initialIds = data.nodes
+            .filter((n) => n.data.kind !== 'gap')
+            .slice(0, 3)
+            .map((n) => n.id);
+          setSelectedPathIds(initialIds);
+        }
       })
       .catch((err) => {
         setError((err as Error).message);
         setLoading(false);
       });
-  }, [activeId]);
+  }, [activeId, searchParams]);
 
-  // Handle keyboard navigation: Esc to close panel, Enter to open focused node
+  // Handle keyboard navigation: Esc to close panels, Enter on nodes
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setSelectedNode(null);
+        setChecklistOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Update URL search params when selectedPathIds changes
+  const updateUrlPath = useCallback(
+    (newPath: string[]) => {
+      setSelectedPathIds(newPath);
+      const params = new URLSearchParams(searchParams);
+      if (newPath.length > 0) {
+        params.set('path', newPath.join(','));
+      } else {
+        params.delete('path');
+      }
+      setSearchParams(params, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
+
   // Handler when user clicks a branch on a decision card or edge
-  const handleSelectBranch = useCallback((decisionNodeId: string, targetNodeId: string) => {
-    if (!rawGraph) return;
+  const handleSelectBranch = useCallback(
+    (decisionNodeId: string, targetNodeId: string) => {
+      if (!rawGraph) return;
 
-    // Find the edge connecting decision to target
-    const edge = rawGraph.edges.find(
-      (e) => e.source === decisionNodeId && e.target === targetNodeId
-    );
-    const branchLabel = typeof edge?.label === 'string' ? edge.label : 'Selected branch';
+      const edge = rawGraph.edges.find(
+        (e) => e.source === decisionNodeId && e.target === targetNodeId
+      );
+      const branchLabel = typeof edge?.label === 'string' ? edge.label : 'Selected branch';
 
-    // Toggle off if already selected
-    if (activeBranchChoice?.decisionId === decisionNodeId && activeBranchChoice.targetId === targetNodeId) {
-      setActiveBranchChoice(null);
-    } else {
+      // Compute new path: preserve path up to decision, append targetNodeId and its downstream nodes
+      const decisionIndex = selectedPathIds.indexOf(decisionNodeId);
+      const prefix = decisionIndex !== -1 ? selectedPathIds.slice(0, decisionIndex + 1) : [decisionNodeId];
+
+      const downstream: string[] = [targetNodeId];
+      const queue = [targetNodeId];
+      while (queue.length > 0) {
+        const curr = queue.shift()!;
+        for (const e of rawGraph.edges) {
+          if (e.source === curr && !downstream.includes(e.target)) {
+            downstream.push(e.target);
+            queue.push(e.target);
+          }
+        }
+      }
+
+      const combinedPath = Array.from(new Set([...prefix, ...downstream]));
+      updateUrlPath(combinedPath);
+
       setActiveBranchChoice({
         decisionId: decisionNodeId,
         targetId: targetNodeId,
         label: branchLabel,
       });
-    }
-  }, [rawGraph, activeBranchChoice]);
 
-  // Compute downstream nodes from a starting node
-  const downstreamNodeIds = useMemo(() => {
-    if (!rawGraph || !activeBranchChoice) return null;
-
-    const downstream = new Set<string>();
-    const queue = [activeBranchChoice.targetId];
-
-    while (queue.length > 0) {
-      const current = queue.shift()!;
-      downstream.add(current);
-      for (const edge of rawGraph.edges) {
-        if (edge.source === current && !downstream.has(edge.target)) {
-          queue.push(edge.target);
-        }
+      // Focus the chosen target node in the inspector
+      const targetNode = rawGraph.nodes.find((n) => n.id === targetNodeId);
+      if (targetNode) {
+        setSelectedNode(targetNode);
       }
-    }
+    },
+    [rawGraph, selectedPathIds, updateUrlPath]
+  );
 
-    // Also include upstream nodes that led to the decision
-    const upstream = new Set<string>();
-    const upQueue = [activeBranchChoice.decisionId];
-    while (upQueue.length > 0) {
-      const curr = upQueue.shift()!;
-      upstream.add(curr);
-      for (const edge of rawGraph.edges) {
-        if (edge.target === curr && !upstream.has(edge.source)) {
-          upQueue.push(edge.source);
-        }
+  // Handler when user clicks any node on the canvas
+  const handleNodeClick = useCallback(
+    (_event: React.MouseEvent, node: Node<GraphNodeData>) => {
+      setSelectedNode(node);
+      // If node is not in selected path, append it
+      if (!selectedPathIds.includes(node.id)) {
+        updateUrlPath([...selectedPathIds, node.id]);
       }
-    }
+    },
+    [selectedPathIds, updateUrlPath]
+  );
 
-    const activeSet = new Set<string>([...downstream, ...upstream]);
-    return activeSet;
-  }, [rawGraph, activeBranchChoice]);
+  // Set of active path node IDs for visual highlighting
+  const activePathSet = useMemo(() => new Set(selectedPathIds), [selectedPathIds]);
 
   // Process nodes to inject branch handlers, outgoing branches, and dimmed states
   const renderedNodes = useMemo(() => {
@@ -143,8 +194,8 @@ export default function MapView() {
 
     return rawGraph.nodes.map((node) => {
       const isSelected = selectedNode?.id === node.id;
-      const isDimmed = downstreamNodeIds !== null && !downstreamNodeIds.has(node.id);
-      const isHighlighted = downstreamNodeIds !== null && downstreamNodeIds.has(node.id);
+      const isInPath = activePathSet.has(node.id);
+      const isDimmed = activePathSet.size > 0 && !isInPath;
 
       // Collect outgoing branches if it's a decision node
       const outgoingEdges = rawGraph.edges.filter((e) => e.source === node.id);
@@ -158,7 +209,7 @@ export default function MapView() {
         ...node.data,
         isDimmed,
         isSelected,
-        isPathHighlighted: isHighlighted,
+        isPathHighlighted: isInPath,
         onSelectBranch: handleSelectBranch,
         outgoingBranches: outgoingBranches.length > 0 ? outgoingBranches : undefined,
       };
@@ -169,37 +220,30 @@ export default function MapView() {
         data: customData,
       };
     });
-  }, [rawGraph, selectedNode, downstreamNodeIds, activeBranchChoice, handleSelectBranch]);
+  }, [rawGraph, selectedNode, activePathSet, activeBranchChoice, handleSelectBranch]);
 
   // Process edges for highlighted / dimmed visual styling
   const renderedEdges = useMemo(() => {
     if (!rawGraph) return [];
 
     return rawGraph.edges.map((edge) => {
+      const isSourceInPath = activePathSet.has(edge.source);
+      const isTargetInPath = activePathSet.has(edge.target);
+      const isInPath = isSourceInPath && isTargetInPath;
+
       const isFromDecision = activeBranchChoice?.decisionId === edge.source;
       const isChosenBranch = isFromDecision && activeBranchChoice?.targetId === edge.target;
-      const isAltBranch = isFromDecision && activeBranchChoice?.targetId !== edge.target;
 
       let stroke = '#64748b'; // slate-500 default
       let strokeWidth = 2;
       let opacity = 0.8;
 
-      if (downstreamNodeIds !== null) {
-        if (downstreamNodeIds.has(edge.source) && downstreamNodeIds.has(edge.target)) {
-          stroke = '#38bdf8'; // sky-400 active path
-          strokeWidth = 3;
-          opacity = 1;
-        } else if (isAltBranch) {
-          opacity = 0.25;
-        } else {
-          opacity = 0.35;
-        }
-      }
-
-      if (isChosenBranch) {
-        stroke = '#a855f7'; // purple-500
+      if (isInPath || isChosenBranch) {
+        stroke = '#38bdf8'; // sky-400 active path
         strokeWidth = 3;
         opacity = 1;
+      } else if (activePathSet.size > 0) {
+        opacity = 0.25;
       }
 
       return {
@@ -212,16 +256,16 @@ export default function MapView() {
           transition: 'all 0.3s ease',
         },
         labelStyle: {
-          fill: isChosenBranch ? '#d8b4fe' : '#94a3b8',
-          fontWeight: isChosenBranch ? 700 : 500,
+          fill: isInPath ? '#e0f2fe' : '#94a3b8',
+          fontWeight: isInPath ? 700 : 500,
           fontSize: 11,
           fontFamily: 'Inter, system-ui, sans-serif',
         },
       };
     });
-  }, [rawGraph, downstreamNodeIds, activeBranchChoice]);
+  }, [rawGraph, activePathSet, activeBranchChoice]);
 
-  // React Flow custom node types registry
+  // Map node types
   const nodeTypes = useMemo(
     () => ({
       procedureNode: ProcedureNode,
@@ -230,7 +274,63 @@ export default function MapView() {
     []
   );
 
-  // Formatted date
+  // Nodes currently in the student's selected path
+  const pathNodes = useMemo(() => {
+    if (!rawGraph) return [];
+    return selectedPathIds
+      .map((id) => rawGraph.nodes.find((n) => n.id === id)?.data)
+      .filter((d): d is GraphNodeData => Boolean(d));
+  }, [rawGraph, selectedPathIds]);
+
+  // Stats for the sticky bottom bar
+  const totalPathSteps = pathNodes.filter((n) => n.kind !== 'gap').length;
+  const totalPathDocs = Array.from(
+    new Set(pathNodes.flatMap((n) => n.documents || []))
+  ).length;
+
+  // Next deadline calculation
+  const nextDeadline = useMemo(() => {
+    for (const node of pathNodes) {
+      if (node.deadline) {
+        if (node.deadline.date) return node.deadline.date;
+        if (node.deadline.text) return node.deadline.text;
+      }
+    }
+    return null;
+  }, [pathNodes]);
+
+  // Handler for sharing path link
+  const handleSharePath = async () => {
+    const fullUrl = window.location.href;
+    await navigator.clipboard.writeText(fullUrl);
+    setShareCopied(true);
+    setTimeout(() => setShareCopied(false), 2000);
+  };
+
+  // Handler for exporting calendar .ics
+  const handleExportCalendar = () => {
+    if (!rawGraph) return;
+    const icsContent = generateIcsCalendar(
+      rawGraph.title,
+      rawGraph.institution,
+      pathNodes,
+      rawGraph.sourceUrl
+    );
+    downloadFile(icsContent, `${activeId}-deadlines.ics`, 'text/calendar;charset=utf-8');
+  };
+
+  // Reset Path
+  const handleResetPath = () => {
+    if (!rawGraph) return;
+    const initialIds = rawGraph.nodes
+      .filter((n) => n.data.kind !== 'gap')
+      .slice(0, 3)
+      .map((n) => n.id);
+    updateUrlPath(initialIds);
+    setActiveBranchChoice(null);
+  };
+
+  // Formatted retrieved date
   const formattedDate = useMemo(() => {
     if (!rawGraph?.retrieved_at) return '';
     try {
@@ -286,24 +386,26 @@ export default function MapView() {
           )}
         </div>
 
-        {/* Right Header Status / Branch Filter */}
+        {/* Right Header Status & Share */}
         <div className="flex items-center gap-3">
-          {activeBranchChoice && (
-            <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-purple-950/60 border border-purple-500/40 text-purple-200 text-xs">
-              <span className="text-purple-300 font-medium truncate max-w-[180px]">
-                Branch: {activeBranchChoice.label}
-              </span>
-              <button
-                type="button"
-                onClick={() => setActiveBranchChoice(null)}
-                className="text-purple-400 hover:text-white p-0.5 rounded hover:bg-purple-900"
-                title="Reset branch highlight"
-                aria-label="Reset branch highlight"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={handleSharePath}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-colors focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+            title="Share this path with a counselor or friend"
+          >
+            {shareCopied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-emerald-300 font-semibold">Link Copied!</span>
+              </>
+            ) : (
+              <>
+                <Share2 className="w-3.5 h-3.5" />
+                <span>Share Path</span>
+              </>
+            )}
+          </button>
 
           {rawGraph && (
             <div className="flex items-center gap-2">
@@ -366,7 +468,7 @@ export default function MapView() {
               nodeTypes={nodeTypes}
               fitView
               fitViewOptions={{ padding: 0.2 }}
-              onNodeClick={(_event, node) => setSelectedNode(node as Node<GraphNodeData>)}
+              onNodeClick={handleNodeClick}
               onEdgeClick={(_event, edge) => {
                 if (edge.source && edge.target) {
                   handleSelectBranch(edge.source, edge.target);
@@ -387,9 +489,9 @@ export default function MapView() {
             </ReactFlow>
 
             {/* Instruction pill at bottom */}
-            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 pointer-events-none z-10 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800/80 backdrop-blur-md text-[11px] text-slate-400 shadow-xl">
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 pointer-events-none z-10 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800/80 backdrop-blur-md text-[11px] text-slate-400 shadow-xl">
               <Sparkles className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-              <span>Click any node to inspect citations • Click decision branches to highlight paths</span>
+              <span>Click branches to navigate your path • Unselected paths dim but stay visible</span>
             </div>
           </div>
         )}
@@ -403,6 +505,82 @@ export default function MapView() {
           />
         )}
       </div>
+
+      {/* PHASE 4: STICKY BOTTOM BAR */}
+      {rawGraph && (
+        <footer
+          aria-label="Your Path Summary"
+          className="h-16 border-t border-slate-800/90 bg-slate-900/95 backdrop-blur-xl px-6 flex items-center justify-between z-20 shrink-0 shadow-2xl"
+        >
+          {/* Path Stats */}
+          <div className="flex items-center gap-4 text-xs sm:text-sm">
+            <span className="font-bold text-white tracking-tight flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse" />
+              Your Path:
+            </span>
+            <div className="flex items-center gap-2 font-mono text-xs text-slate-300">
+              <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">
+                <strong className="text-white">{totalPathSteps}</strong> steps
+              </span>
+              <span>·</span>
+              <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">
+                <strong className="text-white">{totalPathDocs}</strong> documents
+              </span>
+              <span>·</span>
+              <span className="flex items-center gap-1.5 text-slate-300">
+                <Calendar className="w-3.5 h-3.5 text-rose-400" />
+                next deadline:
+                <strong className="text-rose-300 font-semibold ml-0.5">
+                  {nextDeadline || 'None specified'}
+                </strong>
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons: Print Checklist & Add to Calendar */}
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={handleResetPath}
+              className="text-xs px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              title="Reset path to start"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={handleExportCalendar}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/80 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+              title="Export deadlines to .ics calendar file"
+            >
+              <CalendarPlus className="w-3.5 h-3.5 text-rose-400" />
+              <span className="hidden md:inline">Add to Calendar (.ics)</span>
+              <span className="md:hidden">.ics</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setChecklistOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold transition-all shadow-md shadow-sky-500/20 focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Export Action Checklist</span>
+            </button>
+          </div>
+        </footer>
+      )}
+
+      {/* Printable Checklist Modal */}
+      {checklistOpen && rawGraph && (
+        <ChecklistView
+          procedureTitle={rawGraph.title}
+          institution={rawGraph.institution}
+          sourceUrl={rawGraph.sourceUrl}
+          pathNodes={pathNodes}
+          onClose={() => setChecklistOpen(false)}
+        />
+      )}
     </div>
   );
 }

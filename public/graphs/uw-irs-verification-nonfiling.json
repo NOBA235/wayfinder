@@ -183,7 +183,7 @@
         "stepId": "gap-determine-request-method-0",
         "title": "Policy Gap: Uncovered Procedure",
         "description": "Procedure if student or parent filed a Puerto Rican or foreign income tax return",
-        "callScript": "Hello, my name is [Your Name]. I am following the university's UW IRS Verification of Non-filing Letter Procedure. At step \"Choose Request Method\", the published policy does not clarify: \"Procedure if student or parent filed a Puerto Rican or foreign income tax return\". Could I please speak with Office of Student Financial Aid to verify how I should proceed?",
+        "callScript": "Hello, my name is [Your Name], student ID [My ID]. I am following the university's UW IRS Verification of Non-filing Letter Procedure for \"Choose Request Method\". The official policy does not specify what to do if Procedure if student or parent filed a Puerto Rican or foreign income tax return. Could you connect me with Office of Student Financial Aid to confirm how I should proceed?",
         "fallback_contact": {
           "name": "Office of Student Financial Aid",
           "email": null,
@@ -204,7 +204,7 @@
         "stepId": "gap-request-online-transcript-1",
         "title": "Policy Gap: Uncovered Procedure",
         "description": "Procedure if online identity verification fails or user has no mobile phone",
-        "callScript": "Hello, my name is [Your Name]. I am following the university's UW IRS Verification of Non-filing Letter Procedure. At step \"Submit Online Request\", the published policy does not clarify: \"Procedure if online identity verification fails or user has no mobile phone\". Could I please speak with IRS Website Help Desk to verify how I should proceed?",
+        "callScript": "Hello, my name is [Your Name], student ID [My ID]. I am following the university's UW IRS Verification of Non-filing Letter Procedure for \"Submit Online Request\". The official policy does not specify what to do if Procedure if online identity verification fails or user has no mobile phone. Could you connect me with IRS Website Help Desk to confirm how I should proceed?",
         "fallback_contact": {
           "name": "IRS Website Help Desk",
           "email": null,

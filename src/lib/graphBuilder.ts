@@ -37,8 +37,11 @@ function generateCallScript(
   gapDescription: string,
   contactName?: string | null
 ): string {
-  const target = contactName ? contactName : 'an advisor';
-  return `Hello, my name is [Your Name]. I am following the university's ${procedureTitle}. At step "${stepLabel}", the published policy does not clarify: "${gapDescription}". Could I please speak with ${target} to verify how I should proceed?`;
+  const target = contactName ? contactName : 'an academic advisor';
+  const cleanDesc = gapDescription
+    .replace(/^This policy does not specify what happens if\s*/i, '')
+    .replace(/^Policy Gap:\s*/i, '');
+  return `Hello, my name is [Your Name], student ID [My ID]. I am following the university's ${procedureTitle} for "${stepLabel}". The official policy does not specify what to do if ${cleanDesc}. Could you connect me with ${target} to confirm how I should proceed?`;
 }
 
 /**

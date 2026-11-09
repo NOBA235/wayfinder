@@ -161,7 +161,7 @@ exports[`GraphBuilder Pure Function, Layout & Gap Detection > buildGraph is pure
     },
     {
       "data": {
-        "callScript": "Hello, my name is [Your Name]. I am following the university's University of Rochester Academic Grade Appeal Procedure. At step "Instructor Determination", the published policy does not clarify: "This policy does not specify what happens if not If resolution not reached.". Could I please speak with Dean of the College to verify how I should proceed?",
+        "callScript": "Hello, my name is [Your Name], student ID [My ID]. I am following the university's University of Rochester Academic Grade Appeal Procedure for "Instructor Determination". The official policy does not specify what to do if not If resolution not reached.. Could you connect me with Dean of the College to confirm how I should proceed?",
         "description": "This policy does not specify what happens if not If resolution not reached.",
         "fallback_contact": {
           "email": null,
@@ -182,7 +182,7 @@ exports[`GraphBuilder Pure Function, Layout & Gap Detection > buildGraph is pure
     },
     {
       "data": {
-        "callScript": "Hello, my name is [Your Name]. I am following the university's University of Rochester Academic Grade Appeal Procedure. At step "Discuss with Instructor", the published policy does not clarify: "Procedure if instructor is on leave, retired, or unresponsive to email". Could I please speak with Dean of the College to verify how I should proceed?",
+        "callScript": "Hello, my name is [Your Name], student ID [My ID]. I am following the university's University of Rochester Academic Grade Appeal Procedure for "Discuss with Instructor". The official policy does not specify what to do if Procedure if instructor is on leave, retired, or unresponsive to email. Could you connect me with Dean of the College to confirm how I should proceed?",
         "description": "Procedure if instructor is on leave, retired, or unresponsive to email",
         "fallback_contact": {
           "email": null,
