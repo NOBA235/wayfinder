@@ -10,6 +10,7 @@ import {
   Scale,
   Building2,
   FileCheck2,
+  Bookmark,
 } from 'lucide-react';
 
 interface ProcedureManifestItem {
@@ -87,13 +88,20 @@ export default function HomeView() {
           </div>
         </div>
 
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-3">
+          <Link
+            to="/saved"
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-900/80 hover:bg-slate-800 text-slate-200 transition-colors focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+          >
+            <Bookmark className="w-3.5 h-3.5 text-sky-400" />
+            <span>My Saved Paths</span>
+          </Link>
           <button
             type="button"
             onClick={() => setBrowseOpen(!browseOpen)}
             className="text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-900/80 hover:bg-slate-800 text-slate-200 transition-colors focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
           >
-            {browseOpen ? 'Hide procedure catalog' : 'Browse procedures'}
+            {browseOpen ? 'Hide catalog' : 'Browse procedures'}
           </button>
         </nav>
       </header>

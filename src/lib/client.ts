@@ -1,20 +1,35 @@
-import type { ProcedureGraph, ProcedureSummary } from '../types';
-import { defaultRepository, type IProcedureRepository } from './repository';
+import type { SavedPath, IProcedureRepository } from './repository/types';
+import { defaultRepository } from './repository/factory';
 
 export interface IWayfinderClient {
-  listProcedures(): Promise<ProcedureSummary[]>;
-  loadProcedureGraph(id: string): Promise<ProcedureGraph | null>;
+  savePath(path: SavedPath): Promise<SavedPath>;
+  listSavedPaths(studentName?: string): Promise<SavedPath[]>;
+  getSavedPath(pathId: string): Promise<SavedPath | null>;
+  saveCounselorNote(pathId: string, note: string): Promise<SavedPath>;
+  deleteSavedPath(pathId: string): Promise<boolean>;
 }
 
 export class WayfinderClient implements IWayfinderClient {
   constructor(private readonly repo: IProcedureRepository = defaultRepository) {}
 
-  async listProcedures(): Promise<ProcedureSummary[]> {
-    return this.repo.listSummaries();
+  async savePath(path: SavedPath): Promise<SavedPath> {
+    return this.repo.savePath(path);
   }
 
-  async loadProcedureGraph(id: string): Promise<ProcedureGraph | null> {
-    return this.repo.getGraph(id);
+  async listSavedPaths(studentName?: string): Promise<SavedPath[]> {
+    return this.repo.listPathsForUser(studentName);
+  }
+
+  async getSavedPath(pathId: string): Promise<SavedPath | null> {
+    return this.repo.getPath(pathId);
+  }
+
+  async saveCounselorNote(pathId: string, note: string): Promise<SavedPath> {
+    return this.repo.saveCounselorNote(pathId, note);
+  }
+
+  async deleteSavedPath(pathId: string): Promise<boolean> {
+    return this.repo.deletePath(pathId);
   }
 }
 

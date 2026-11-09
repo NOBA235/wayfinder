@@ -19,11 +19,14 @@ import {
   Share2,
   Check,
   Calendar,
+  Bookmark,
+  BookmarkCheck,
 } from 'lucide-react';
 import { ProcedureNode, type CustomNodeData } from './ProcedureNode';
 import { CitationSidePanel } from './CitationSidePanel';
 import { ChecklistView } from './ChecklistView';
 import { generateIcsCalendar, downloadFile } from '../lib/exportUtils';
+import { wayfinderClient } from '../lib/client';
 import type { GraphNodeData } from '../lib/graphBuilder';
 
 interface StaticProcedureGraph {
@@ -299,6 +302,33 @@ export default function MapView() {
     return null;
   }, [pathNodes]);
 
+  // Handler for saving path to repository
+  const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
+  const [savedPathId, setSavedPathId] = useState<string | null>(null);
+
+  const handleSavePath = async () => {
+    if (!rawGraph) return;
+
+    const displayName = window.prompt('Enter a title or name for your plan (no login needed):', 'My Action Plan');
+    if (!displayName) return;
+
+    const id = savedPathId || `path-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    await wayfinderClient.savePath({
+      id,
+      procedureId: activeId,
+      procedureTitle: rawGraph.title,
+      institution: rawGraph.institution,
+      studentName: displayName.trim(),
+      selectedStepIds: selectedPathIds,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    setSavedPathId(id);
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 3500);
+  };
+
   // Handler for sharing path link
   const handleSharePath = async () => {
     const fullUrl = window.location.href;
@@ -537,7 +567,7 @@ export default function MapView() {
             </div>
           </div>
 
-          {/* Action Buttons: Print Checklist & Add to Calendar */}
+          {/* Action Buttons: Save, Print Checklist & Add to Calendar */}
           <div className="flex items-center gap-2.5">
             <button
               type="button"
@@ -547,6 +577,36 @@ export default function MapView() {
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
+
+            <button
+              type="button"
+              onClick={handleSavePath}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                savedSuccess
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700/80'
+              }`}
+              title="Save path to your saved paths"
+            >
+              {savedSuccess ? (
+                <>
+                  <BookmarkCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Saved!</span>
+                </>
+              ) : (
+                <>
+                  <Bookmark className="w-3.5 h-3.5 text-sky-400" />
+                  <span>Save Path</span>
+                </>
+              )}
+            </button>
+
+            <Link
+              to="/saved"
+              className="hidden lg:inline-flex text-xs text-slate-400 hover:text-sky-400 px-2 py-1 transition-colors underline underline-offset-2"
+            >
+              My Saved Paths
+            </Link>
 
             <button
               type="button"
