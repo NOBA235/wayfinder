@@ -4,6 +4,7 @@ import MapView from './components/MapView';
 import DebugGraphView from './components/DebugGraphView';
 import SavedPathsView from './components/SavedPathsView';
 import CounselorView from './components/CounselorView';
+import LabView from './components/LabView';
 
 export default function App() {
   return (
@@ -18,6 +19,9 @@ export default function App() {
         <Route path="/saved" element={<SavedPathsView />} />
         <Route path="/counselor/:pathId" element={<CounselorView />} />
         <Route path="/counselor" element={<Navigate to="/saved" replace />} />
+
+        {/* Phase 6 Developer Route */}
+        <Route path="/lab" element={<LabView />} />
 
         {/* Debug Topology Routes */}
         <Route path="/debug/:procedureId" element={<DebugGraphView />} />

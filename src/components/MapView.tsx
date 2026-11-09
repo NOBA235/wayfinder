@@ -376,7 +376,29 @@ export default function MapView() {
   }, [rawGraph?.retrieved_at]);
 
   const gapCount = rawGraph?.nodes.filter((n) => n.data.kind === 'gap').length || 0;
-  const isVerified = rawGraph?.verified ?? true;
+  
+  // Phase 6 Failure-State Tour parameters
+  const tourMode = searchParams.get('tour');
+  const isVerified = tourMode === 'unverified' ? false : (rawGraph?.verified ?? true);
+
+  // Auto-focus nodes based on tour mode
+  useEffect(() => {
+    if (!rawGraph) return;
+
+    if (tourMode === 'gap') {
+      const gapNode = rawGraph.nodes.find((n) => n.data.kind === 'gap');
+      if (gapNode) {
+        setSelectedNode(gapNode);
+      }
+    } else if (tourMode === 'date-unknown') {
+      const dateUnknownNode = rawGraph.nodes.find(
+        (n) => n.data.deadline && !n.data.deadline.date && n.data.deadline.text
+      );
+      if (dateUnknownNode) {
+        setSelectedNode(dateUnknownNode);
+      }
+    }
+  }, [rawGraph, tourMode]);
 
   return (
     <div className="flex flex-col h-screen w-screen bg-slate-950 text-slate-100 font-sans overflow-hidden">
@@ -454,6 +476,31 @@ export default function MapView() {
           )}
         </div>
       </header>
+
+      {/* Phase 6 Failure-State Demo Tour Banner */}
+      {tourMode && (
+        <div className="bg-amber-950/90 border-b border-amber-500/40 px-5 py-2 text-xs text-amber-200 flex items-center justify-between z-10 shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+            <strong className="text-white">Failure-State Demo Tour:</strong>
+            {tourMode === 'unverified' && (
+              <span>Demonstrating Unverified Policy Warning when claims fail verbatim grounding.</span>
+            )}
+            {tourMode === 'gap' && (
+              <span>Demonstrating Policy Gap UX: Published policy stopped here; student receives build-time phone script.</span>
+            )}
+            {tourMode === 'date-unknown' && (
+              <span>Demonstrating Date-Unknown Deadline: Policy omitted calendar date; flagged as "call to confirm".</span>
+            )}
+          </div>
+          <Link
+            to={`/map/${activeId}`}
+            className="text-[11px] text-amber-300 hover:text-white underline font-mono"
+          >
+            Exit Tour
+          </Link>
+        </div>
+      )}
 
       {/* Main Canvas + Right Side Citation Panel */}
       <div className="flex-1 flex relative overflow-hidden bg-slate-950">
