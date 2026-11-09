@@ -257,4 +257,51 @@ describe('Wayfinder Phase 1 Invariants & Grounding', () => {
       }
     }
   });
+
+  it('Test 7: Data Provenance Invariant - Fixture data lives exclusively under __tests__/fixtures/ and never under public/ or src/data/', () => {
+    // 1. Check that public/ contains no fixtures
+    const publicDir = path.resolve(process.cwd(), 'public');
+    const publicFixturesDir = path.join(publicDir, 'fixtures');
+    expect(fs.existsSync(publicFixturesDir)).toBe(false);
+
+    // 2. Check that src/data does not exist
+    const srcDataDir = path.resolve(process.cwd(), 'src', 'data');
+    expect(fs.existsSync(srcDataDir)).toBe(false);
+
+    // 3. Verify __tests__/fixtures/ exists and contains the expected test fixtures
+    const testFixturesDir = path.resolve(process.cwd(), '__tests__', 'fixtures');
+    expect(fs.existsSync(testFixturesDir)).toBe(true);
+    const fixtureFiles = fs.readdirSync(testFixturesDir);
+    expect(fixtureFiles).toContain('clean_procedure.txt');
+    expect(fixtureFiles).toContain('missing_deadline.txt');
+    expect(fixtureFiles).toContain('non_process.txt');
+  });
+
+  it('Test 8: Data Provenance Invariant - Strict correspondence between data/raw/ and data/procedures/', () => {
+    const rawDir = path.resolve(process.cwd(), 'data', 'raw');
+    const proceduresDir = path.resolve(process.cwd(), 'data', 'procedures');
+
+    expect(fs.existsSync(rawDir)).toBe(true);
+    expect(fs.existsSync(proceduresDir)).toBe(true);
+
+    const procedureFiles = fs.readdirSync(proceduresDir).filter((f) => f.endsWith('.json'));
+    expect(procedureFiles.length).toBe(3);
+
+    for (const pFile of procedureFiles) {
+      const pData = JSON.parse(fs.readFileSync(path.join(proceduresDir, pFile), 'utf-8'));
+      // Raw text file referenced must exist on disk
+      const rawPath = path.resolve(process.cwd(), pData.raw_text_path);
+      expect(fs.existsSync(rawPath)).toBe(true);
+
+      const rawContent = fs.readFileSync(rawPath, 'utf-8');
+      expect(rawContent.length).toBeGreaterThan(100);
+
+      // Verify every step source sentence exists in raw scraped text
+      for (const step of pData.steps) {
+        expect(step.source_sentence).toBeDefined();
+        expect(step.source_sentence.length).toBeGreaterThan(10);
+        expect(normalizeWhitespace(rawContent)).toContain(normalizeWhitespace(step.source_sentence));
+      }
+    }
+  });
 });

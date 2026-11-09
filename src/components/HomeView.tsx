@@ -207,20 +207,29 @@ export default function HomeView() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {procedures.map((p) => (
-                <Link
-                  key={p.id}
-                  to={`/map/${p.id}`}
-                  className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-sky-500/50 hover:bg-slate-950 text-left transition-all group focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
-                >
-                  <h4 className="text-xs font-bold text-white group-hover:text-sky-300 transition-colors line-clamp-1">
-                    {p.title}
-                  </h4>
-                  <p className="text-[11px] text-slate-400 mt-1 font-mono">
-                    {p.institution}
+              {procedures.length === 0 ? (
+                <div className="p-8 rounded-xl bg-slate-900/60 border border-slate-800 text-center space-y-2 col-span-full">
+                  <p className="text-sm text-slate-300 font-medium">No Ingested Procedures Available</p>
+                  <p className="text-xs text-slate-500 font-mono">
+                    Wayfinder strictly forbids fabricated or mock data. Run <span className="text-sky-400">npm run ingest -- --url &lt;url&gt;</span> to extract real policies.
                   </p>
-                </Link>
-              ))}
+                </div>
+              ) : (
+                procedures.map((p) => (
+                  <Link
+                    key={p.id}
+                    to={`/map/${p.id}`}
+                    className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-sky-500/50 hover:bg-slate-950 text-left transition-all group focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+                  >
+                    <h4 className="text-xs font-bold text-white group-hover:text-sky-300 transition-colors line-clamp-1">
+                      {p.title}
+                    </h4>
+                    <p className="text-[11px] text-slate-400 mt-1 font-mono">
+                      {p.institution}
+                    </p>
+                  </Link>
+                ))
+              )}
             </div>
           </section>
         )}

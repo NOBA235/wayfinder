@@ -214,16 +214,34 @@ export const CitationSidePanel: React.FC<CitationSidePanelProps> = ({
             type="button"
             id="source-citation-heading"
             onClick={() => setSourceExpanded(!sourceExpanded)}
-            className="w-full flex items-center justify-between p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition-colors text-left focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+            className={`w-full flex items-center justify-between p-3.5 rounded-xl border transition-colors text-left focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
+              nodeData.grounded === false && !isGap
+                ? 'bg-rose-950/40 border-rose-500/60 hover:border-rose-400'
+                : 'bg-slate-950/80 border-slate-800 hover:border-slate-700'
+            }`}
           >
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span className="text-xs font-semibold text-white tracking-wide">
-                Verbatim Policy Citation
-              </span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
-                100% Grounded
-              </span>
+              {nodeData.grounded === false && !isGap ? (
+                <>
+                  <AlertTriangle className="w-4 h-4 text-rose-400" />
+                  <span className="text-xs font-semibold text-rose-200 tracking-wide">
+                    Policy Grounding Citation
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-mono font-bold animate-pulse">
+                    ⚠️ UNGROUNDED CLAIM
+                  </span>
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span className="text-xs font-semibold text-white tracking-wide">
+                    Verbatim Policy Citation
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono font-semibold">
+                    100% Grounded
+                  </span>
+                </>
+              )}
             </div>
             {sourceExpanded ? (
               <ChevronUp className="w-4 h-4 text-slate-400" />
@@ -233,12 +251,33 @@ export const CitationSidePanel: React.FC<CitationSidePanelProps> = ({
           </button>
 
           {sourceExpanded && (
-            <div className="mt-2 p-4 rounded-xl bg-slate-950/90 border border-slate-800/80 space-y-3">
-              <p className="text-[11px] text-slate-400">
-                In adherence to Wayfinder's grounding invariant, this step corresponds verbatim to the university's published text:
-              </p>
+            <div
+              className={`mt-2 p-4 rounded-xl border space-y-3 ${
+                nodeData.grounded === false && !isGap
+                  ? 'bg-rose-950/20 border-rose-500/40'
+                  : 'bg-slate-950/90 border-slate-800/80'
+              }`}
+            >
+              {nodeData.grounded === false && !isGap ? (
+                <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2 leading-relaxed">
+                  <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                  <span>
+                    <strong>Ungrounded Step:</strong> This claim could not be matched verbatim to the scraped policy page text. In Wayfinder, ungrounded claims are never hidden.
+                  </span>
+                </div>
+              ) : (
+                <p className="text-[11px] text-slate-400">
+                  In adherence to Wayfinder's grounding invariant, this step corresponds verbatim to the university's published text:
+                </p>
+              )}
 
-              <blockquote className="text-xs italic text-slate-200 border-l-2 border-emerald-500 pl-3 py-1 leading-relaxed bg-slate-900/60 p-2.5 rounded-r select-text font-serif">
+              <blockquote
+                className={`text-xs italic pl-3 py-1.5 leading-relaxed rounded-r select-text font-serif ${
+                  nodeData.grounded === false && !isGap
+                    ? 'border-l-2 border-rose-500 text-rose-200 bg-rose-950/40 p-2.5'
+                    : 'border-l-2 border-emerald-500 text-slate-200 bg-slate-900/60 p-2.5'
+                }`}
+              >
                 "{nodeData.source_sentence || 'Explicit policy requirement extracted from page.'}"
               </blockquote>
 

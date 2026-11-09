@@ -90,7 +90,9 @@ function ProcedureNodeComponent({
       base += 'ring-1 ring-sky-500/60 shadow-md shadow-sky-500/10 ';
     }
 
-    if (kind === 'gap') {
+    if (data.grounded === false && kind !== 'gap') {
+      base += 'bg-rose-950/20 border-2 border-rose-500/80 ring-1 ring-rose-500/50 hover:border-rose-400 backdrop-blur-md ';
+    } else if (kind === 'gap') {
       base += 'bg-amber-950/20 border-2 border-dashed border-amber-500/60 hover:border-amber-400 ';
     } else if (kind === 'decision') {
       base += 'bg-slate-900/90 border border-purple-500/40 hover:border-purple-400/80 backdrop-blur-md ';
@@ -118,10 +120,20 @@ function ProcedureNodeComponent({
       {/* Header with Kind Badge and Grounding Indicator */}
       <div className="flex items-center justify-between gap-2 mb-2">
         {getKindBadge()}
-        {data.grounded && kind !== 'gap' && (
-          <span className="text-[10px] text-emerald-400/80 font-mono">
-            Grounded ✓
-          </span>
+        {kind !== 'gap' && (
+          data.grounded ? (
+            <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1 font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              Grounded ✓
+            </span>
+          ) : (
+            <span
+              title="This claim could not be verified against the university source text"
+              className="text-[10px] text-rose-300 bg-rose-500/20 border border-rose-500/50 px-1.5 py-0.5 rounded font-mono font-bold flex items-center gap-1 animate-pulse"
+            >
+              ⚠️ UNGROUNDED
+            </span>
+          )
         )}
       </div>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Printer, ShieldCheck, FileText, Calendar, Building2, PhoneCall } from 'lucide-react';
+import { X, Printer, ShieldCheck, AlertTriangle, FileText, Calendar, Building2, PhoneCall } from 'lucide-react';
 import type { GraphNodeData } from '../lib/graphBuilder';
 
 interface ChecklistViewProps {
@@ -24,6 +24,10 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
   // Collect all unique documents across the path
   const allDocs = Array.from(
     new Set(pathNodes.flatMap((n) => n.documents || []))
+  );
+
+  const hasUngroundedSteps = pathNodes.some(
+    (n) => n.kind !== 'gap' && n.grounded === false
   );
 
   return (
@@ -74,9 +78,15 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
           <div className="border-b border-slate-800 print:border-black pb-4">
             <div className="flex items-center justify-between text-xs text-slate-400 print:text-gray-600 font-mono">
               <span>WAYFINDER • OFFICIAL STUDENT ACTION CHECKLIST</span>
-              <span className="flex items-center gap-1 font-semibold text-emerald-400 print:text-green-800">
-                <ShieldCheck className="w-3.5 h-3.5" /> 100% Verbatim Grounded
-              </span>
+              {hasUngroundedSteps ? (
+                <span className="flex items-center gap-1 font-semibold text-rose-400 print:text-red-700">
+                  <AlertTriangle className="w-3.5 h-3.5" /> Contains Ungrounded Steps
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 font-semibold text-emerald-400 print:text-green-800">
+                  <ShieldCheck className="w-3.5 h-3.5" /> 100% Verbatim Grounded
+                </span>
+              )}
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-white print:text-black tracking-tight mt-1">
               {procedureTitle}
@@ -167,10 +177,16 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                   );
                 }
 
+                const isUngrounded = step.kind !== 'gap' && step.grounded === false;
+
                 return (
                   <li
                     key={step.stepId}
-                    className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 print:border-gray-300 print:bg-white print:p-2 flex items-start gap-3"
+                    className={`p-3 rounded-xl border flex items-start gap-3 ${
+                      isUngrounded
+                        ? 'bg-rose-950/20 border-rose-500/60 print:border-red-400 print:bg-red-50'
+                        : 'bg-slate-900/60 border-slate-800 print:border-gray-300 print:bg-white'
+                    } print:p-2`}
                   >
                     <input
                       type="checkbox"
@@ -183,9 +199,16 @@ export const ChecklistView: React.FC<ChecklistViewProps> = ({
                         <span className="text-xs font-bold text-white print:text-black">
                           Step {index + 1}: {step.title || step.label}
                         </span>
-                        <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 print:bg-gray-100 text-slate-300 print:text-gray-700 border border-slate-700 print:border-gray-300">
-                          {step.kind}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          {isUngrounded && (
+                            <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 print:text-red-700 border border-rose-500/40 print:border-red-400">
+                              ⚠️ UNGROUNDED
+                            </span>
+                          )}
+                          <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 print:bg-gray-100 text-slate-300 print:text-gray-700 border border-slate-700 print:border-gray-300">
+                            {step.kind}
+                          </span>
+                        </div>
                       </div>
 
                       <p className="text-xs text-slate-300 print:text-gray-800 leading-relaxed">

@@ -44,6 +44,7 @@ export default function MapView() {
   const { procedureId } = useParams<{ procedureId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeId = procedureId || 'rochester-grade-appeal';
+  const isFixtureMode = searchParams.get('fixture') === 'true';
 
   const [rawGraph, setRawGraph] = useState<StaticProcedureGraph | null>(null);
   const [selectedNode, setSelectedNode] = useState<Node<GraphNodeData> | null>(null);
@@ -461,6 +462,12 @@ export default function MapView() {
 
           {rawGraph && (
             <div className="flex items-center gap-2">
+              {isFixtureMode && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/50 font-mono">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  Fixture Data
+                </span>
+              )}
               {isVerified ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   <ShieldCheck className="w-3.5 h-3.5" />
@@ -525,6 +532,9 @@ export default function MapView() {
               <h2 className="text-lg font-bold text-white">Procedure Not Found</h2>
               <p className="text-xs text-slate-400 leading-relaxed font-mono">
                 {error}
+              </p>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                Under Wayfinder's strict data provenance invariants, mock or fabricated procedures are forbidden. If a policy has not been scraped and ingested, it will not be displayed.
               </p>
               <Link
                 to="/"

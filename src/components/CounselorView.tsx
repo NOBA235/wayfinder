@@ -223,9 +223,16 @@ export default function CounselorView() {
                           <span className="text-xs font-bold text-white">
                             {step.title || step.label}
                           </span>
-                          <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
-                            {step.kind}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {step.kind !== 'gap' && step.grounded === false && (
+                              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">
+                                ⚠️ UNGROUNDED
+                              </span>
+                            )}
+                            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                              {step.kind}
+                            </span>
+                          </div>
                         </div>
                         <p className="text-xs text-slate-300 leading-relaxed">
                           {step.description}
