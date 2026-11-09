@@ -1,104 +1,93 @@
-# Wayfinder — University Policy Navigator
+# Wayfinder
 
-> **IceHacks 2026 Hackathon Submission**  
-> Turn complex university policies into deterministic, branching visual procedure maps with 100% verbatim source grounding.
+**Turn university policies into interactive, source-linked procedure maps.**
 
----
+Wayfinder helps students make sense of administrative procedures such as grade appeals and financial aid verification. Choose a situation, follow the relevant branches, and open a step to see the policy text it came from. The student experience is a visual map rather than a chatbot.
 
-## Live Links
+> Wayfinder is a navigation aid, not an official university service. Policies can change; confirm current requirements and deadlines with the university before acting.
 
-- **Live URL**: https://wayfinder-icehacks.vercel.app *(or https://deployxa.com/p/wayfinder)*
-- **Demo Video (≤ 3:00)**: https://youtu.be/icehacks-wayfinder-demo
-- **Demo Script with Timestamps**: [DEMO.md](file:///f:/Wayfinder/DEMO.md)
-- **Devpost Submission**: [DEVPOST.md](file:///f:/Wayfinder/DEVPOST.md)
+## Try Wayfinder
 
----
+- [Open the live app](https://wayfinder-icehacks.vercel.app)
+- [Watch the demo video](https://youtu.be/icehacks-wayfinder-demo)
 
-## The Non-Negotiable Invariant: AI is Build-Time Only
+## What you can do
 
-> **AI is used only at build-time (ingestion), never at runtime.** Once a procedure map is built, the student navigates plain, deterministic data. No LLM call happens when a student clicks a node, selects a branch, or inspects a step. Every node carries an exact `source_sentence` that is a verbatim substring of the scraped university policy page. If a claim cannot be grounded in a source sentence, it is NOT a step—it becomes either a policy gap or it is dropped. Interaction is 100% selection, clicking, and exploring. There is no chat interface anywhere in this product.
+- Explore procedures as interactive maps and choose branches that match your situation.
+- Inspect a step's source sentence and open the original university policy page.
+- See where a policy leaves a question unanswered, with a suggested question to ask the university.
+- Export a printable checklist or an `.ics` calendar file for dated deadlines.
+- Save a path in your browser or share it by URL for review.
 
----
+Wayfinder uses an LLM during procedure ingestion to extract candidate steps. A deterministic validator checks those steps against the scraped policy text; an ungrounded step causes the procedure to be marked unverified. Once a map is built, exploring it uses static graph data and does not make LLM calls.
 
-## Architecture Diagram
+## Sample policy maps
+
+| Institution | Procedure | Official source |
+|---|---|---|
+| UC Berkeley | Financial aid and enrollment adjustments | [Financial Aid: How Aid Works](https://financialaid.berkeley.edu/how-aid-works/) |
+| University of Rochester | Academic grade appeals | [College Center for Advising Services: Grade Appeal](https://www.rochester.edu/college/ccas/handbook/grade-appeal.html) |
+| University of Washington | IRS verification of non-filing | [Financial Aid: Verification](https://www.washington.edu/financialaid/receiving-aid/verification/) |
+
+Each map includes its source URL and retrieval timestamp. Check the linked university page for the current policy.
+
+## How it works
 
 ```mermaid
-flowchart TD
-    subgraph INGESTION ["BUILD-TIME INGESTION PIPELINE (CLI)"]
-        U["University Policy URL"] --> S["scraper.ts<br/>(Anakin API / Readability)"]
-        S --> R["data/raw/<slug>.txt"]
-        R --> E["extractor.ts<br/>(Gemini / Anthropic / OpenAI)<br/>Strict JSON & Temp: 0"]
-        E --> G["grounding.ts<br/>(Verbatim Substring Assertions)"]
-        G -- "Ungrounded Step" --> W["CLI Exits 2 & Flags Unverified"]
-        G -- "100% Grounded" --> B["graphBuilder.ts<br/>(Dagre Auto-Layout & Gap Detection)"]
-        B --> P["public/graphs/<id>.json<br/>(Static Deterministic Graph)"]
-    end
-
-    subgraph RUNTIME ["STUDENT RUNTIME (100% DETERMINISTIC)"]
-        P --> UI["React Flow Canvas<br/>(React + Vite + Tailwind)"]
-        UI --> M["Custom Node Kinds<br/>Action / Decision / Deadline / Document / Gap"]
-        UI --> C["Citation Side Panel<br/>(Verbatim Policy Sentence Quote)"]
-        UI --> GAP["Policy Gap Action<br/>(What to Say on the Phone Script)"]
-        UI --> EXP["Client Exports<br/>(1-Page PDF Checklist & .ics Calendar Sync)"]
-        UI --> REP["repository.ts Interface<br/>(LocalStorage / Momen Adapter)"]
-        REP --> COUNSELOR["Counselor Review Dashboard<br/>(/counselor/:pathId)"]
-    end
-
-    style INGESTION fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc
-    style RUNTIME fill:#020617,stroke:#a855f7,stroke-width:2px,color:#f8fafc
+flowchart LR
+    A[University policy page] --> B[Scrape and extract steps]
+    B --> C[Check source text]
+    C --> D[Build static procedure graph]
+    D --> E[Interactive map in the browser]
 ```
 
----
+The graph builder creates decision, action, deadline, document, contact, and policy-gap nodes. Layout and navigation are deterministic. If the source does not specify a next step, the map can surface that gap instead of presenting a guess as policy.
 
-## Key Features
+## Run locally
 
-1. **No Chatbot Box**: Interaction is selection, clicking, and exploring. The student chooses their situation and follows deterministic branching.
-2. **Interactive Branch Pathing**: Clicking a decision branch highlights the student's chosen downstream path, while alternative paths dim to 35% opacity.
-3. **Hard Verbatim Citation**: Clicking any node opens a right-side panel displaying the exact sentence quoted from the university's regulations and a direct link.
-4. **Emotional Peak — The Policy Gap**: When regulations omit next steps, Wayfinder surfaces a dashed amber Policy Gap node with an exact build-time phone script for self-advocacy.
-5. **Action Plan Exports**:
-   - **Checklist**: Prints on one page for 6-step procedures with required document checkboxes.
-   - **Calendar (.ics)**: Exports deadline events for Google Calendar. Steps with unspecified dates are excluded and documented under *"Dates unknown — call to confirm"*.
-   - **Path Sharing & Counselor Review**: Encodes paths into URLs and allows counselors to leave advisory notes persisted in the repository.
-6. **Developer Ingestion Lab (`/lab`)**: Demonstrates live pipeline execution, timing out gracefully and returning structured refusals `{"error": "not_a_process"}` on non-procedural pages.
+### Requirements
 
----
+- Node.js 18 or newer
+- npm 9 or newer
 
-## Failure-State Demo Tour (Query Parameters)
+### Start the app
 
-To demonstrate how failure states are treated as first-class architectural features, append these query parameters during judging:
+The sample maps are included in `public/graphs`, so no API credentials are needed to explore them.
 
-| Demo State | URL Query | Demonstration |
-|---|---|---|
-| **Unverified Policy Banner** | `/map/rochester-grade-appeal?tour=unverified` | Shows amber warning banner when claims fail verbatim grounding check. |
-| **Policy Gap Encounter** | `/map/rochester-grade-appeal?tour=gap` | Auto-focuses gap node and displays judge-readable phone script. |
-| **Date-Unknown Deadline** | `/map/berkeley-aid-disbursement-adjustments?tour=date-unknown` | Shows deadline with unspecified date flagged as "call to confirm". |
-| **Non-Process Refusal** | `/lab` (Preset: Mission Statement) | Shows pipeline refusing rather than inventing: `{"error": "not_a_process"}`. |
-
----
-
-## Running Locally
-
-### Prerequisites
-- Node.js >= 18
-- npm >= 9
-
-### Install & Test
 ```bash
-# Install dependencies
 npm install
-
-# Run 24 Vitest unit, snapshot, and invariant tests
-npm test
-
-# Build production bundle under strict TypeScript
-npm run build
-
-# Start local development server
 npm run dev
 ```
 
-### Running Ingestion Pipeline
+Open the local URL printed by Vite. To create a production build or run the existing test suite:
+
+```bash
+npm run build
+npm test
+```
+
+## Ingest a policy (optional)
+
+Ingestion fetches a policy page, extracts candidate procedure steps with an LLM, validates their source sentences, and writes a procedure JSON file to `data/procedures/`. It requires an LLM API key. The Anakin scraping API key is optional; without it, the pipeline falls back to Readability.
+
+Copy `.env.example` to `.env` and set `LLM_API_KEY` for the provider selected by `LLM_PROVIDER` (Gemini is the default). You can also set provider-specific keys such as `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`. Set `ANAKIN_API_KEY` only if you want to use that scraper.
+
 ```bash
 npm run ingest -- --url "https://www.washington.edu/financialaid/receiving-aid/verification/" --institution "University of Washington"
 ```
+
+To build static graphs from the JSON files in `data/procedures/`:
+
+```bash
+npx tsx scripts/buildGraphs.ts
+```
+
+This writes graph JSON files and a manifest to `public/graphs/`. Review generated content and its citations before publishing a map. The grounding check confirms that cited sentences appear in the retrieved text; it does not guarantee that a policy interpretation is complete or current.
+
+## Tech stack
+
+React, TypeScript, Vite, Tailwind CSS, React Flow (`@xyflow/react`), Dagre, and Zod.
+
+## Data and saved paths
+
+Procedure maps are static JSON files served by the app. Saved paths and counselor notes use browser `localStorage` in the default configuration; they are not synced to a shared account or server. The repository interface includes a REST adapter, but the local-storage adapter is enabled by default.
