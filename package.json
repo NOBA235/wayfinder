@@ -7,10 +7,10 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "ingest": "tsx src/services/ingestCli.ts"
+    "ingest": "tsx scripts/ingest.ts"
   },
   "dependencies": {
-    "@google/genai": "^0.1.2",
+    "@google/generative-ai": "^0.24.1",
     "@mozilla/readability": "^0.5.0",
     "@xyflow/react": "^12.4.4",
     "clsx": "^2.1.1",
