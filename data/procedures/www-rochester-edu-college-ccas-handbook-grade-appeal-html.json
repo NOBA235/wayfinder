@@ -1,0 +1,127 @@
+{
+  "procedure_id": "rochester-grade-appeal",
+  "institution": "University of Rochester",
+  "title": "University of Rochester Academic Grade Appeal Procedure",
+  "source_url": "https://www.rochester.edu/college/ccas/handbook/grade-appeal.html",
+  "retrieved_at": "2026-11-09T13:39:32.598Z",
+  "raw_text_path": "data/raw/www-rochester-edu-college-ccas-handbook-grade-appeal-html.txt",
+  "steps": [
+    {
+      "id": "check-syllabus-guidelines",
+      "label": "Review Syllabus Guidelines",
+      "type": "action",
+      "description_plain": "Check course syllabus or instructor guidelines for specific appeal rules.",
+      "deadline": null,
+      "documents": [
+        "Course Syllabus"
+      ],
+      "contact": null,
+      "depends_on": [],
+      "source_sentence": "If a student believes that an error in grading has been made, they should follow the guidelines provided in the syllabus or by the instructor for a grade appeal.",
+      "source_url": "https://www.rochester.edu/college/ccas/handbook/grade-appeal.html",
+      "grounded": true
+    },
+    {
+      "id": "approach-faculty-member",
+      "label": "Discuss with Instructor",
+      "type": "contact",
+      "description_plain": "Approach faculty member promptly to discuss the grading concern.",
+      "deadline": null,
+      "documents": [],
+      "contact": null,
+      "depends_on": [
+        "check-syllabus-guidelines"
+      ],
+      "source_sentence": "If specific guidelines are not provided, students are encouraged to approach the faculty member as soon as possible after the grade is received to discuss the matter.",
+      "source_url": "https://www.rochester.edu/college/ccas/handbook/grade-appeal.html",
+      "grounded": true
+    },
+    {
+      "id": "instructor-evaluates-and-corrects",
+      "label": "Instructor Determination",
+      "type": "decision",
+      "description_plain": "Professor corrects grading error or explains reasoning.",
+      "deadline": null,
+      "documents": [],
+      "contact": null,
+      "depends_on": [
+        "approach-faculty-member"
+      ],
+      "source_sentence": "If the professor determines that a grading error was made, the professor will be responsible for correcting the error.",
+      "source_url": "https://www.rochester.edu/college/ccas/handbook/grade-appeal.html",
+      "grounded": true
+    },
+    {
+      "id": "request-formal-review",
+      "label": "Submit Formal Complaint Form",
+      "type": "document",
+      "description_plain": "Submit complaint form if no satisfactory resolution is reached.",
+      "deadline": null,
+      "documents": [
+        "Complaint Form"
+      ],
+      "contact": null,
+      "depends_on": [
+        "instructor-evaluates-and-corrects"
+      ],
+      "source_sentence": "In the event that a satisfactory resolution cannot be reached, a student has the option to request a formal review of the matter by submitting a complaint form.",
+      "source_url": "https://www.rochester.edu/college/ccas/handbook/grade-appeal.html",
+      "grounded": true
+    },
+    {
+      "id": "appeal-to-dean",
+      "label": "Appeal to Dean of the College",
+      "type": "action",
+      "description_plain": "Appeal to college dean if unsatisfied with review outcome.",
+      "deadline": null,
+      "documents": [
+        "Complaint or Comment Form"
+      ],
+      "contact": {
+        "name": "Dean of the College",
+        "email": null,
+        "phone": null
+      },
+      "depends_on": [
+        "request-formal-review"
+      ],
+      "source_sentence": "If the student submitting the complaint or comment form is not satisfied with the outcome of the review, the student may appeal the decision to the dean of the College.",
+      "source_url": "https://www.rochester.edu/college/ccas/handbook/grade-appeal.html",
+      "grounded": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "check-syllabus-guidelines",
+      "to": "approach-faculty-member",
+      "condition": null
+    },
+    {
+      "from": "approach-faculty-member",
+      "to": "instructor-evaluates-and-corrects",
+      "condition": null
+    },
+    {
+      "from": "instructor-evaluates-and-corrects",
+      "to": "request-formal-review",
+      "condition": "If resolution not reached"
+    },
+    {
+      "from": "request-formal-review",
+      "to": "appeal-to-dean",
+      "condition": "If unsatisfied with review outcome"
+    }
+  ],
+  "gaps": [
+    {
+      "after_step": "approach-faculty-member",
+      "description": "Procedure if instructor is on leave, retired, or unresponsive to email",
+      "fallback_contact": {
+        "name": "Dean of the College",
+        "email": null,
+        "phone": null
+      }
+    }
+  ],
+  "verified": true
+}

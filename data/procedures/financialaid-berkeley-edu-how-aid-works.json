@@ -1,0 +1,170 @@
+{
+  "procedure_id": "berkeley-aid-disbursement-adjustments",
+  "institution": "UC Berkeley",
+  "title": "UC Berkeley Financial Aid Disbursement and Enrollment Adjustment Procedure",
+  "source_url": "https://financialaid.berkeley.edu/how-aid-works/",
+  "retrieved_at": "2026-11-09T13:39:51.977Z",
+  "raw_text_path": "data/raw/financialaid-berkeley-edu-how-aid-works.txt",
+  "steps": [
+    {
+      "id": "aid-applied-to-charges",
+      "label": "Review Term Aid Application",
+      "type": "action",
+      "description_plain": "Aid applies toward oldest charges in current/prior term of academic year.",
+      "deadline": null,
+      "documents": [],
+      "contact": null,
+      "depends_on": [],
+      "source_sentence": "When you receive aid, all of your accepted financial aid for a current term will apply toward charges on your account before refunds are issued.",
+      "source_url": "https://financialaid.berkeley.edu/how-aid-works/",
+      "grounded": true
+    },
+    {
+      "id": "oldest-charges-priority",
+      "label": "Apply Aid to Oldest Charges",
+      "type": "action",
+      "description_plain": "Aid prioritizes oldest account charges before current charges.",
+      "deadline": null,
+      "documents": [],
+      "contact": null,
+      "depends_on": [
+        "aid-applied-to-charges"
+      ],
+      "source_sentence": "Financial Aid applies to the oldest charges on the account before applying toward current charges.",
+      "source_url": "https://financialaid.berkeley.edu/how-aid-works/",
+      "grounded": true
+    },
+    {
+      "id": "monitor-reduced-course-load",
+      "label": "Assess Reduced Course Load Status",
+      "type": "decision",
+      "description_plain": "Awards assume 12 units at semester start; grants adjust if taking reduced load.",
+      "deadline": null,
+      "documents": [],
+      "contact": null,
+      "depends_on": [
+        "oldest-charges-priority"
+      ],
+      "source_sentence": "At the start of the semester, Cal Grants and Pell Grants are awarded assuming you are enrolled in at least 12 units, but they pay differently.",
+      "source_url": "https://financialaid.berkeley.edu/how-aid-works/",
+      "grounded": true
+    },
+    {
+      "id": "enrollment-freeze-census",
+      "label": "Census Enrollment Level Check",
+      "type": "deadline",
+      "description_plain": "Enrollment captured at end of 5th week of classes to recalculate grant awards.",
+      "deadline": {
+        "date": null,
+        "text": "end of the 5th week of classes"
+      },
+      "documents": [],
+      "contact": null,
+      "depends_on": [
+        "monitor-reduced-course-load"
+      ],
+      "source_sentence": "We capture your enrollment level at the end of the 5th week of classes and adjust Cal Grants and Pell Grants accordingly.",
+      "source_url": "https://financialaid.berkeley.edu/how-aid-works/",
+      "grounded": true
+    },
+    {
+      "id": "adjust-cal-grant",
+      "label": "Adjust Cal Grant Allocation",
+      "type": "action",
+      "description_plain": "Cal Grant award offer reduced to match verified enrollment level.",
+      "deadline": null,
+      "documents": [],
+      "contact": null,
+      "depends_on": [
+        "enrollment-freeze-census"
+      ],
+      "source_sentence": "The amount of your Cal Grant award offer will be reduced to match your enrollment.",
+      "source_url": "https://financialaid.berkeley.edu/how-aid-works/",
+      "grounded": true
+    },
+    {
+      "id": "adjust-pell-grant",
+      "label": "Reconcile Pell Grant Invoice",
+      "type": "action",
+      "description_plain": "Pell Grant reduction may generate an invoice on student bill.",
+      "deadline": null,
+      "documents": [],
+      "contact": null,
+      "depends_on": [
+        "enrollment-freeze-census"
+      ],
+      "source_sentence": "The amount of your Pell Grant award offer will be reduced to match your enrollment.",
+      "source_url": "https://financialaid.berkeley.edu/how-aid-works/",
+      "grounded": true
+    },
+    {
+      "id": "consult-cal-student-central",
+      "label": "Contact Cal Student Central",
+      "type": "contact",
+      "description_plain": "Consult advisor to review individual award adjustments.",
+      "deadline": null,
+      "documents": [],
+      "contact": {
+        "name": "Cal Student Central",
+        "email": null,
+        "phone": null
+      },
+      "depends_on": [
+        "adjust-cal-grant",
+        "adjust-pell-grant"
+      ],
+      "source_sentence": "Contact Cal Student Central to find out how your individual awards may change.",
+      "source_url": "https://financialaid.berkeley.edu/how-aid-works/",
+      "grounded": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "aid-applied-to-charges",
+      "to": "oldest-charges-priority",
+      "condition": null
+    },
+    {
+      "from": "oldest-charges-priority",
+      "to": "monitor-reduced-course-load",
+      "condition": null
+    },
+    {
+      "from": "monitor-reduced-course-load",
+      "to": "enrollment-freeze-census",
+      "condition": null
+    },
+    {
+      "from": "enrollment-freeze-census",
+      "to": "adjust-cal-grant",
+      "condition": "For Cal Grant recipients"
+    },
+    {
+      "from": "enrollment-freeze-census",
+      "to": "adjust-pell-grant",
+      "condition": "For Pell Grant recipients"
+    },
+    {
+      "from": "adjust-cal-grant",
+      "to": "consult-cal-student-central",
+      "condition": null
+    },
+    {
+      "from": "adjust-pell-grant",
+      "to": "consult-cal-student-central",
+      "condition": null
+    }
+  ],
+  "gaps": [
+    {
+      "after_step": "adjust-pell-grant",
+      "description": "Procedure if student cannot afford the repayment invoice generated by census reduction",
+      "fallback_contact": {
+        "name": "Cal Student Central",
+        "email": null,
+        "phone": null
+      }
+    }
+  ],
+  "verified": true
+}

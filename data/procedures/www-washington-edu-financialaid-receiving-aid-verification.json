@@ -1,0 +1,190 @@
+{
+  "procedure_id": "uw-irs-verification-nonfiling",
+  "institution": "University of Washington",
+  "title": "UW IRS Verification of Non-filing Letter Procedure",
+  "source_url": "https://www.washington.edu/financialaid/receiving-aid/verification/",
+  "retrieved_at": "2026-11-09T13:39:14.151Z",
+  "raw_text_path": "data/raw/www-washington-edu-financialaid-receiving-aid-verification.txt",
+  "steps": [
+    {
+      "id": "determine-request-method",
+      "label": "Choose Request Method",
+      "type": "decision",
+      "description_plain": "Request letter from IRS via Online, Telephone, or Paper form.",
+      "deadline": null,
+      "documents": [],
+      "contact": null,
+      "depends_on": [],
+      "source_sentence": "Non Tax filers can request an IRS Verification of Non-filing Letter, free of charge, from the IRS in one of three ways:",
+      "source_url": "https://www.washington.edu/financialaid/receiving-aid/verification/",
+      "grounded": true
+    },
+    {
+      "id": "request-online-transcript",
+      "label": "Submit Online Request",
+      "type": "action",
+      "description_plain": "Access IRS Get Transcript Online tool.",
+      "deadline": null,
+      "documents": [
+        "Social Security Number or ITIN",
+        "Mailing address",
+        "Account number for loan or credit card"
+      ],
+      "contact": null,
+      "depends_on": [
+        "determine-request-method"
+      ],
+      "source_sentence": "Follow instructions for creating an account or log in.",
+      "source_url": "https://www.washington.edu/financialaid/receiving-aid/verification/",
+      "grounded": true
+    },
+    {
+      "id": "select-tax-year",
+      "label": "Select Non-Filing Letter & Tax Year",
+      "type": "action",
+      "description_plain": "Specify the requested tax year for verification.",
+      "deadline": null,
+      "documents": [],
+      "contact": null,
+      "depends_on": [
+        "request-online-transcript"
+      ],
+      "source_sentence": "Select “Verification of Non-filing Letter” and in the Tax Year field, enter the tax year we are requesting.",
+      "source_url": "https://www.washington.edu/financialaid/receiving-aid/verification/",
+      "grounded": true
+    },
+    {
+      "id": "submit-online-letter-to-uw",
+      "label": "Submit Letter to Financial Aid Office",
+      "type": "document",
+      "description_plain": "Submit printed letter with student name and ID.",
+      "deadline": null,
+      "documents": [
+        "IRS Verification of Non-filing Letter"
+      ],
+      "contact": {
+        "name": "Office of Student Financial Aid",
+        "email": null,
+        "phone": null
+      },
+      "depends_on": [
+        "select-tax-year"
+      ],
+      "source_sentence": "Submit the IRS Verification of Non-filing Letter, if requested, to the Office of Student Financial Aid; make sure to include the student’s name and UW student ID number on the letter.",
+      "source_url": "https://www.washington.edu/financialaid/receiving-aid/verification/",
+      "grounded": true
+    },
+    {
+      "id": "telephone-request",
+      "label": "Request Letter by Telephone",
+      "type": "contact",
+      "description_plain": "Call IRS automated phone service to order paper letter.",
+      "deadline": {
+        "date": null,
+        "text": "within 5 to 10 days from the time of the request"
+      },
+      "documents": [],
+      "contact": {
+        "name": "IRS Phone Service",
+        "email": null,
+        "phone": "1-800-908-9946"
+      },
+      "depends_on": [
+        "determine-request-method"
+      ],
+      "source_sentence": "Available from the IRS by calling 1-800-908-9946.",
+      "source_url": "https://www.washington.edu/financialaid/receiving-aid/verification/",
+      "grounded": true
+    },
+    {
+      "id": "paper-request-form-4506t",
+      "label": "Download & Complete Form 4506-T",
+      "type": "document",
+      "description_plain": "Download IRS Form 4506-T and complete lines 1 through 9.",
+      "deadline": null,
+      "documents": [
+        "IRS Form 4506-T"
+      ],
+      "contact": null,
+      "depends_on": [
+        "determine-request-method"
+      ],
+      "source_sentence": "Download IRS Form 4506-T.",
+      "source_url": "https://www.washington.edu/financialaid/receiving-aid/verification/",
+      "grounded": true
+    },
+    {
+      "id": "mail-or-fax-form-4506t",
+      "label": "Mail or Fax Form 4506-T",
+      "type": "action",
+      "description_plain": "Send completed form to the IRS processing address or fax.",
+      "deadline": {
+        "date": null,
+        "text": "within 5 to 10 days"
+      },
+      "documents": [
+        "Signed IRS Form 4506-T"
+      ],
+      "contact": null,
+      "depends_on": [
+        "paper-request-form-4506t"
+      ],
+      "source_sentence": "Mail or fax the completed IRS Form 4506-T to the address (or FAX number) provided on page 2 of Form 4506-T.",
+      "source_url": "https://www.washington.edu/financialaid/receiving-aid/verification/",
+      "grounded": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "determine-request-method",
+      "to": "request-online-transcript",
+      "condition": "If requesting online"
+    },
+    {
+      "from": "request-online-transcript",
+      "to": "select-tax-year",
+      "condition": null
+    },
+    {
+      "from": "select-tax-year",
+      "to": "submit-online-letter-to-uw",
+      "condition": null
+    },
+    {
+      "from": "determine-request-method",
+      "to": "telephone-request",
+      "condition": "If requesting by phone"
+    },
+    {
+      "from": "determine-request-method",
+      "to": "paper-request-form-4506t",
+      "condition": "If requesting by mail/paper"
+    },
+    {
+      "from": "paper-request-form-4506t",
+      "to": "mail-or-fax-form-4506t",
+      "condition": null
+    }
+  ],
+  "gaps": [
+    {
+      "after_step": "determine-request-method",
+      "description": "Procedure if student or parent filed a Puerto Rican or foreign income tax return",
+      "fallback_contact": {
+        "name": "Office of Student Financial Aid",
+        "email": null,
+        "phone": null
+      }
+    },
+    {
+      "after_step": "request-online-transcript",
+      "description": "Procedure if online identity verification fails or user has no mobile phone",
+      "fallback_contact": {
+        "name": "IRS Website Help Desk",
+        "email": null,
+        "phone": "1-800-876-1715"
+      }
+    }
+  ],
+  "verified": true
+}
