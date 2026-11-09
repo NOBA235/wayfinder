@@ -1,0 +1,273 @@
+{
+  "id": "uw-irs-verification-nonfiling",
+  "title": "UW IRS Verification of Non-filing Letter Procedure",
+  "institution": "University of Washington",
+  "sourceUrl": "https://www.washington.edu/financialaid/receiving-aid/verification/",
+  "retrieved_at": "2026-11-09T13:39:14.151Z",
+  "verified": true,
+  "nodes": [
+    {
+      "id": "determine-request-method",
+      "type": "default",
+      "position": {
+        "x": 505,
+        "y": 40
+      },
+      "data": {
+        "label": "[DECISION] Choose Request Method",
+        "kind": "decision",
+        "stepId": "determine-request-method",
+        "title": "Choose Request Method",
+        "description": "Request letter from IRS via Online, Telephone, or Paper form.",
+        "source_sentence": "Non Tax filers can request an IRS Verification of Non-filing Letter, free of charge, from the IRS in one of three ways:",
+        "deadline": null,
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "request-online-transcript",
+      "type": "default",
+      "position": {
+        "x": 970,
+        "y": 200
+      },
+      "data": {
+        "label": "[ACTION] Submit Online Request",
+        "kind": "action",
+        "stepId": "request-online-transcript",
+        "title": "Submit Online Request",
+        "description": "Access IRS Get Transcript Online tool.",
+        "source_sentence": "Follow instructions for creating an account or log in.",
+        "deadline": null,
+        "documents": [
+          "Social Security Number or ITIN",
+          "Mailing address",
+          "Account number for loan or credit card"
+        ],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "select-tax-year",
+      "type": "default",
+      "position": {
+        "x": 1125,
+        "y": 360
+      },
+      "data": {
+        "label": "[ACTION] Select Non-Filing Letter & Tax Year",
+        "kind": "action",
+        "stepId": "select-tax-year",
+        "title": "Select Non-Filing Letter & Tax Year",
+        "description": "Specify the requested tax year for verification.",
+        "source_sentence": "Select “Verification of Non-filing Letter” and in the Tax Year field, enter the tax year we are requesting.",
+        "deadline": null,
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "submit-online-letter-to-uw",
+      "type": "default",
+      "position": {
+        "x": 1125,
+        "y": 520
+      },
+      "data": {
+        "label": "[DOCUMENT] Submit Letter to Financial Aid Office",
+        "kind": "document",
+        "stepId": "submit-online-letter-to-uw",
+        "title": "Submit Letter to Financial Aid Office",
+        "description": "Submit printed letter with student name and ID.",
+        "source_sentence": "Submit the IRS Verification of Non-filing Letter, if requested, to the Office of Student Financial Aid; make sure to include the student’s name and UW student ID number on the letter.",
+        "deadline": null,
+        "documents": [
+          "IRS Verification of Non-filing Letter"
+        ],
+        "contact": {
+          "name": "Office of Student Financial Aid",
+          "email": null,
+          "phone": null
+        },
+        "grounded": true
+      }
+    },
+    {
+      "id": "telephone-request",
+      "type": "default",
+      "position": {
+        "x": 660,
+        "y": 200
+      },
+      "data": {
+        "label": "[CONTACT] Request Letter by Telephone",
+        "kind": "contact",
+        "stepId": "telephone-request",
+        "title": "Request Letter by Telephone",
+        "description": "Call IRS automated phone service to order paper letter.",
+        "source_sentence": "Available from the IRS by calling 1-800-908-9946.",
+        "deadline": {
+          "date": null,
+          "text": "within 5 to 10 days from the time of the request"
+        },
+        "documents": [],
+        "contact": {
+          "name": "IRS Phone Service",
+          "email": null,
+          "phone": "1-800-908-9946"
+        },
+        "grounded": true
+      }
+    },
+    {
+      "id": "paper-request-form-4506t",
+      "type": "default",
+      "position": {
+        "x": 350,
+        "y": 200
+      },
+      "data": {
+        "label": "[DOCUMENT] Download & Complete Form 4506-T",
+        "kind": "document",
+        "stepId": "paper-request-form-4506t",
+        "title": "Download & Complete Form 4506-T",
+        "description": "Download IRS Form 4506-T and complete lines 1 through 9.",
+        "source_sentence": "Download IRS Form 4506-T.",
+        "deadline": null,
+        "documents": [
+          "IRS Form 4506-T"
+        ],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "mail-or-fax-form-4506t",
+      "type": "default",
+      "position": {
+        "x": 350,
+        "y": 360
+      },
+      "data": {
+        "label": "[ACTION] Mail or Fax Form 4506-T",
+        "kind": "action",
+        "stepId": "mail-or-fax-form-4506t",
+        "title": "Mail or Fax Form 4506-T",
+        "description": "Send completed form to the IRS processing address or fax.",
+        "source_sentence": "Mail or fax the completed IRS Form 4506-T to the address (or FAX number) provided on page 2 of Form 4506-T.",
+        "deadline": {
+          "date": null,
+          "text": "within 5 to 10 days"
+        },
+        "documents": [
+          "Signed IRS Form 4506-T"
+        ],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "gap-determine-request-method-0",
+      "type": "default",
+      "position": {
+        "x": 40,
+        "y": 200
+      },
+      "data": {
+        "label": "⚠️ [POLICY GAP] Procedure if student or parent filed a Puerto Rican or foreign income tax return",
+        "kind": "gap",
+        "stepId": "gap-determine-request-method-0",
+        "title": "Policy Gap: Uncovered Procedure",
+        "description": "Procedure if student or parent filed a Puerto Rican or foreign income tax return",
+        "callScript": "Hello, my name is [Your Name]. I am following the university's UW IRS Verification of Non-filing Letter Procedure. At step \"Choose Request Method\", the published policy does not clarify: \"Procedure if student or parent filed a Puerto Rican or foreign income tax return\". Could I please speak with Office of Student Financial Aid to verify how I should proceed?",
+        "fallback_contact": {
+          "name": "Office of Student Financial Aid",
+          "email": null,
+          "phone": null
+        }
+      }
+    },
+    {
+      "id": "gap-request-online-transcript-1",
+      "type": "default",
+      "position": {
+        "x": 815,
+        "y": 360
+      },
+      "data": {
+        "label": "⚠️ [POLICY GAP] Procedure if online identity verification fails or user has no mobile phone",
+        "kind": "gap",
+        "stepId": "gap-request-online-transcript-1",
+        "title": "Policy Gap: Uncovered Procedure",
+        "description": "Procedure if online identity verification fails or user has no mobile phone",
+        "callScript": "Hello, my name is [Your Name]. I am following the university's UW IRS Verification of Non-filing Letter Procedure. At step \"Submit Online Request\", the published policy does not clarify: \"Procedure if online identity verification fails or user has no mobile phone\". Could I please speak with IRS Website Help Desk to verify how I should proceed?",
+        "fallback_contact": {
+          "name": "IRS Website Help Desk",
+          "email": null,
+          "phone": "1-800-876-1715"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "determine-request-method->request-online-transcript",
+      "source": "determine-request-method",
+      "target": "request-online-transcript",
+      "label": "If requesting online",
+      "type": "smoothstep"
+    },
+    {
+      "id": "request-online-transcript->select-tax-year",
+      "source": "request-online-transcript",
+      "target": "select-tax-year",
+      "type": "smoothstep"
+    },
+    {
+      "id": "select-tax-year->submit-online-letter-to-uw",
+      "source": "select-tax-year",
+      "target": "submit-online-letter-to-uw",
+      "type": "smoothstep"
+    },
+    {
+      "id": "determine-request-method->telephone-request",
+      "source": "determine-request-method",
+      "target": "telephone-request",
+      "label": "If requesting by phone",
+      "type": "smoothstep"
+    },
+    {
+      "id": "determine-request-method->paper-request-form-4506t",
+      "source": "determine-request-method",
+      "target": "paper-request-form-4506t",
+      "label": "If requesting by mail/paper",
+      "type": "smoothstep"
+    },
+    {
+      "id": "paper-request-form-4506t->mail-or-fax-form-4506t",
+      "source": "paper-request-form-4506t",
+      "target": "mail-or-fax-form-4506t",
+      "type": "smoothstep"
+    },
+    {
+      "id": "determine-request-method->gap-determine-request-method-0",
+      "source": "determine-request-method",
+      "target": "gap-determine-request-method-0",
+      "label": "Policy Gap",
+      "type": "smoothstep",
+      "animated": true
+    },
+    {
+      "id": "request-online-transcript->gap-request-online-transcript-1",
+      "source": "request-online-transcript",
+      "target": "gap-request-online-transcript-1",
+      "label": "Policy Gap",
+      "type": "smoothstep",
+      "animated": true
+    }
+  ]
+}

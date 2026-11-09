@@ -1,0 +1,206 @@
+{
+  "id": "rochester-grade-appeal",
+  "title": "University of Rochester Academic Grade Appeal Procedure",
+  "institution": "University of Rochester",
+  "sourceUrl": "https://www.rochester.edu/college/ccas/handbook/grade-appeal.html",
+  "retrieved_at": "2026-11-09T13:39:32.598Z",
+  "verified": true,
+  "nodes": [
+    {
+      "id": "check-syllabus-guidelines",
+      "type": "default",
+      "position": {
+        "x": 195,
+        "y": 40
+      },
+      "data": {
+        "label": "[ACTION] Review Syllabus Guidelines",
+        "kind": "action",
+        "stepId": "check-syllabus-guidelines",
+        "title": "Review Syllabus Guidelines",
+        "description": "Check course syllabus or instructor guidelines for specific appeal rules.",
+        "source_sentence": "If a student believes that an error in grading has been made, they should follow the guidelines provided in the syllabus or by the instructor for a grade appeal.",
+        "deadline": null,
+        "documents": [
+          "Course Syllabus"
+        ],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "approach-faculty-member",
+      "type": "default",
+      "position": {
+        "x": 195,
+        "y": 200
+      },
+      "data": {
+        "label": "[CONTACT] Discuss with Instructor",
+        "kind": "contact",
+        "stepId": "approach-faculty-member",
+        "title": "Discuss with Instructor",
+        "description": "Approach faculty member promptly to discuss the grading concern.",
+        "source_sentence": "If specific guidelines are not provided, students are encouraged to approach the faculty member as soon as possible after the grade is received to discuss the matter.",
+        "deadline": null,
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "instructor-evaluates-and-corrects",
+      "type": "default",
+      "position": {
+        "x": 350,
+        "y": 360
+      },
+      "data": {
+        "label": "[DECISION] Instructor Determination",
+        "kind": "decision",
+        "stepId": "instructor-evaluates-and-corrects",
+        "title": "Instructor Determination",
+        "description": "Professor corrects grading error or explains reasoning.",
+        "source_sentence": "If the professor determines that a grading error was made, the professor will be responsible for correcting the error.",
+        "deadline": null,
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "request-formal-review",
+      "type": "default",
+      "position": {
+        "x": 505,
+        "y": 520
+      },
+      "data": {
+        "label": "[DOCUMENT] Submit Formal Complaint Form",
+        "kind": "document",
+        "stepId": "request-formal-review",
+        "title": "Submit Formal Complaint Form",
+        "description": "Submit complaint form if no satisfactory resolution is reached.",
+        "source_sentence": "In the event that a satisfactory resolution cannot be reached, a student has the option to request a formal review of the matter by submitting a complaint form.",
+        "deadline": null,
+        "documents": [
+          "Complaint Form"
+        ],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "appeal-to-dean",
+      "type": "default",
+      "position": {
+        "x": 505,
+        "y": 680
+      },
+      "data": {
+        "label": "[ACTION] Appeal to Dean of the College",
+        "kind": "action",
+        "stepId": "appeal-to-dean",
+        "title": "Appeal to Dean of the College",
+        "description": "Appeal to college dean if unsatisfied with review outcome.",
+        "source_sentence": "If the student submitting the complaint or comment form is not satisfied with the outcome of the review, the student may appeal the decision to the dean of the College.",
+        "deadline": null,
+        "documents": [
+          "Complaint or Comment Form"
+        ],
+        "contact": {
+          "name": "Dean of the College",
+          "email": null,
+          "phone": null
+        },
+        "grounded": true
+      }
+    },
+    {
+      "id": "gap-instructor-evaluates-and-corrects-unhandled",
+      "type": "default",
+      "position": {
+        "x": 195,
+        "y": 520
+      },
+      "data": {
+        "label": "⚠️ [POLICY GAP] This policy does not specify what happens if not If resolution not reached.",
+        "kind": "gap",
+        "stepId": "gap-instructor-evaluates-and-corrects-unhandled",
+        "title": "Policy Gap: Unhandled Branch",
+        "description": "This policy does not specify what happens if not If resolution not reached.",
+        "callScript": "Hello, my name is [Your Name]. I am following the university's University of Rochester Academic Grade Appeal Procedure. At step \"Instructor Determination\", the published policy does not clarify: \"This policy does not specify what happens if not If resolution not reached.\". Could I please speak with Dean of the College to verify how I should proceed?",
+        "fallback_contact": {
+          "name": "Dean of the College",
+          "email": null,
+          "phone": null
+        }
+      }
+    },
+    {
+      "id": "gap-approach-faculty-member-0",
+      "type": "default",
+      "position": {
+        "x": 40,
+        "y": 360
+      },
+      "data": {
+        "label": "⚠️ [POLICY GAP] Procedure if instructor is on leave, retired, or unresponsive to email",
+        "kind": "gap",
+        "stepId": "gap-approach-faculty-member-0",
+        "title": "Policy Gap: Uncovered Procedure",
+        "description": "Procedure if instructor is on leave, retired, or unresponsive to email",
+        "callScript": "Hello, my name is [Your Name]. I am following the university's University of Rochester Academic Grade Appeal Procedure. At step \"Discuss with Instructor\", the published policy does not clarify: \"Procedure if instructor is on leave, retired, or unresponsive to email\". Could I please speak with Dean of the College to verify how I should proceed?",
+        "fallback_contact": {
+          "name": "Dean of the College",
+          "email": null,
+          "phone": null
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "check-syllabus-guidelines->approach-faculty-member",
+      "source": "check-syllabus-guidelines",
+      "target": "approach-faculty-member",
+      "type": "smoothstep"
+    },
+    {
+      "id": "approach-faculty-member->instructor-evaluates-and-corrects",
+      "source": "approach-faculty-member",
+      "target": "instructor-evaluates-and-corrects",
+      "type": "smoothstep"
+    },
+    {
+      "id": "instructor-evaluates-and-corrects->request-formal-review",
+      "source": "instructor-evaluates-and-corrects",
+      "target": "request-formal-review",
+      "label": "If resolution not reached",
+      "type": "smoothstep"
+    },
+    {
+      "id": "request-formal-review->appeal-to-dean",
+      "source": "request-formal-review",
+      "target": "appeal-to-dean",
+      "label": "If unsatisfied with review outcome",
+      "type": "smoothstep"
+    },
+    {
+      "id": "instructor-evaluates-and-corrects->gap-instructor-evaluates-and-corrects-unhandled",
+      "source": "instructor-evaluates-and-corrects",
+      "target": "gap-instructor-evaluates-and-corrects-unhandled",
+      "label": "Policy Gap: Unhandled Branch",
+      "type": "smoothstep",
+      "animated": true
+    },
+    {
+      "id": "approach-faculty-member->gap-approach-faculty-member-0",
+      "source": "approach-faculty-member",
+      "target": "gap-approach-faculty-member-0",
+      "label": "Policy Gap",
+      "type": "smoothstep",
+      "animated": true
+    }
+  ]
+}

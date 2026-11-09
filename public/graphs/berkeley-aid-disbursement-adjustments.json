@@ -1,0 +1,261 @@
+{
+  "id": "berkeley-aid-disbursement-adjustments",
+  "title": "UC Berkeley Financial Aid Disbursement and Enrollment Adjustment Procedure",
+  "institution": "UC Berkeley",
+  "sourceUrl": "https://financialaid.berkeley.edu/how-aid-works/",
+  "retrieved_at": "2026-11-09T13:39:51.977Z",
+  "verified": true,
+  "nodes": [
+    {
+      "id": "aid-applied-to-charges",
+      "type": "default",
+      "position": {
+        "x": 360,
+        "y": 40
+      },
+      "data": {
+        "label": "[ACTION] Review Term Aid Application",
+        "kind": "action",
+        "stepId": "aid-applied-to-charges",
+        "title": "Review Term Aid Application",
+        "description": "Aid applies toward oldest charges in current/prior term of academic year.",
+        "source_sentence": "When you receive aid, all of your accepted financial aid for a current term will apply toward charges on your account before refunds are issued.",
+        "deadline": null,
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "oldest-charges-priority",
+      "type": "default",
+      "position": {
+        "x": 360,
+        "y": 200
+      },
+      "data": {
+        "label": "[ACTION] Apply Aid to Oldest Charges",
+        "kind": "action",
+        "stepId": "oldest-charges-priority",
+        "title": "Apply Aid to Oldest Charges",
+        "description": "Aid prioritizes oldest account charges before current charges.",
+        "source_sentence": "Financial Aid applies to the oldest charges on the account before applying toward current charges.",
+        "deadline": null,
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "monitor-reduced-course-load",
+      "type": "default",
+      "position": {
+        "x": 360,
+        "y": 360
+      },
+      "data": {
+        "label": "[DECISION] Assess Reduced Course Load Status",
+        "kind": "decision",
+        "stepId": "monitor-reduced-course-load",
+        "title": "Assess Reduced Course Load Status",
+        "description": "Awards assume 12 units at semester start; grants adjust if taking reduced load.",
+        "source_sentence": "At the start of the semester, Cal Grants and Pell Grants are awarded assuming you are enrolled in at least 12 units, but they pay differently.",
+        "deadline": null,
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "enrollment-freeze-census",
+      "type": "default",
+      "position": {
+        "x": 205,
+        "y": 520
+      },
+      "data": {
+        "label": "[DEADLINE] Census Enrollment Level Check",
+        "kind": "deadline",
+        "stepId": "enrollment-freeze-census",
+        "title": "Census Enrollment Level Check",
+        "description": "Enrollment captured at end of 5th week of classes to recalculate grant awards.",
+        "source_sentence": "We capture your enrollment level at the end of the 5th week of classes and adjust Cal Grants and Pell Grants accordingly.",
+        "deadline": {
+          "date": null,
+          "text": "end of the 5th week of classes"
+        },
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "adjust-cal-grant",
+      "type": "default",
+      "position": {
+        "x": 370,
+        "y": 680
+      },
+      "data": {
+        "label": "[ACTION] Adjust Cal Grant Allocation",
+        "kind": "action",
+        "stepId": "adjust-cal-grant",
+        "title": "Adjust Cal Grant Allocation",
+        "description": "Cal Grant award offer reduced to match verified enrollment level.",
+        "source_sentence": "The amount of your Cal Grant award offer will be reduced to match your enrollment.",
+        "deadline": null,
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "adjust-pell-grant",
+      "type": "default",
+      "position": {
+        "x": 50,
+        "y": 680
+      },
+      "data": {
+        "label": "[ACTION] Reconcile Pell Grant Invoice",
+        "kind": "action",
+        "stepId": "adjust-pell-grant",
+        "title": "Reconcile Pell Grant Invoice",
+        "description": "Pell Grant reduction may generate an invoice on student bill.",
+        "source_sentence": "The amount of your Pell Grant award offer will be reduced to match your enrollment.",
+        "deadline": null,
+        "documents": [],
+        "contact": null,
+        "grounded": true
+      }
+    },
+    {
+      "id": "consult-cal-student-central",
+      "type": "default",
+      "position": {
+        "x": 360,
+        "y": 840
+      },
+      "data": {
+        "label": "[CONTACT] Contact Cal Student Central",
+        "kind": "contact",
+        "stepId": "consult-cal-student-central",
+        "title": "Contact Cal Student Central",
+        "description": "Consult advisor to review individual award adjustments.",
+        "source_sentence": "Contact Cal Student Central to find out how your individual awards may change.",
+        "deadline": null,
+        "documents": [],
+        "contact": {
+          "name": "Cal Student Central",
+          "email": null,
+          "phone": null
+        },
+        "grounded": true
+      }
+    },
+    {
+      "id": "gap-monitor-reduced-course-load-unhandled",
+      "type": "default",
+      "position": {
+        "x": 515,
+        "y": 520
+      },
+      "data": {
+        "label": "⚠️ [POLICY GAP] This policy does not specify what happens if an alternate resolution occurs.",
+        "kind": "gap",
+        "stepId": "gap-monitor-reduced-course-load-unhandled",
+        "title": "Policy Gap: Unhandled Branch",
+        "description": "This policy does not specify what happens if an alternate resolution occurs.",
+        "callScript": "Hello, my name is [Your Name]. I am following the university's UC Berkeley Financial Aid Disbursement and Enrollment Adjustment Procedure. At step \"Assess Reduced Course Load Status\", the published policy does not clarify: \"This policy does not specify what happens if an alternate resolution occurs.\". Could I please speak with Cal Student Central to verify how I should proceed?",
+        "fallback_contact": {
+          "name": "Cal Student Central",
+          "email": null,
+          "phone": null
+        }
+      }
+    },
+    {
+      "id": "gap-adjust-pell-grant-0",
+      "type": "default",
+      "position": {
+        "x": 40,
+        "y": 840
+      },
+      "data": {
+        "label": "⚠️ [POLICY GAP] Procedure if student cannot afford the repayment invoice generated by census reduction",
+        "kind": "gap",
+        "stepId": "gap-adjust-pell-grant-0",
+        "title": "Policy Gap: Uncovered Procedure",
+        "description": "Procedure if student cannot afford the repayment invoice generated by census reduction",
+        "callScript": "Hello, my name is [Your Name]. I am following the university's UC Berkeley Financial Aid Disbursement and Enrollment Adjustment Procedure. At step \"Reconcile Pell Grant Invoice\", the published policy does not clarify: \"Procedure if student cannot afford the repayment invoice generated by census reduction\". Could I please speak with Cal Student Central to verify how I should proceed?",
+        "fallback_contact": {
+          "name": "Cal Student Central",
+          "email": null,
+          "phone": null
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "aid-applied-to-charges->oldest-charges-priority",
+      "source": "aid-applied-to-charges",
+      "target": "oldest-charges-priority",
+      "type": "smoothstep"
+    },
+    {
+      "id": "oldest-charges-priority->monitor-reduced-course-load",
+      "source": "oldest-charges-priority",
+      "target": "monitor-reduced-course-load",
+      "type": "smoothstep"
+    },
+    {
+      "id": "monitor-reduced-course-load->enrollment-freeze-census",
+      "source": "monitor-reduced-course-load",
+      "target": "enrollment-freeze-census",
+      "type": "smoothstep"
+    },
+    {
+      "id": "enrollment-freeze-census->adjust-cal-grant",
+      "source": "enrollment-freeze-census",
+      "target": "adjust-cal-grant",
+      "label": "For Cal Grant recipients",
+      "type": "smoothstep"
+    },
+    {
+      "id": "enrollment-freeze-census->adjust-pell-grant",
+      "source": "enrollment-freeze-census",
+      "target": "adjust-pell-grant",
+      "label": "For Pell Grant recipients",
+      "type": "smoothstep"
+    },
+    {
+      "id": "adjust-cal-grant->consult-cal-student-central",
+      "source": "adjust-cal-grant",
+      "target": "consult-cal-student-central",
+      "type": "smoothstep"
+    },
+    {
+      "id": "adjust-pell-grant->consult-cal-student-central",
+      "source": "adjust-pell-grant",
+      "target": "consult-cal-student-central",
+      "type": "smoothstep"
+    },
+    {
+      "id": "monitor-reduced-course-load->gap-monitor-reduced-course-load-unhandled",
+      "source": "monitor-reduced-course-load",
+      "target": "gap-monitor-reduced-course-load-unhandled",
+      "label": "Policy Gap: Unhandled Branch",
+      "type": "smoothstep",
+      "animated": true
+    },
+    {
+      "id": "adjust-pell-grant->gap-adjust-pell-grant-0",
+      "source": "adjust-pell-grant",
+      "target": "gap-adjust-pell-grant-0",
+      "label": "Policy Gap",
+      "type": "smoothstep",
+      "animated": true
+    }
+  ]
+}
